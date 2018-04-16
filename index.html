@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!--NICOLE FERRIS AND JAVONNE THOMAS 
+    DATA FROM EXTERNAL SOURCES PROJECT
+    FLU VACCINE LOCATIONS
+    DUE APRIL 15H 2018-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.3.0/mustache.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOIWQs5VJGG-mhVvhnf5Sabt0o_9OdsUY"></script> <!--import libraries-->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+  <script type="text/template" id="acc"> <!-- mustache template!-->
+    <div class= 'card'>
+        <h2>{{borough}}</h2>
+			<marquee>City:{{city}}</marquee>
+            <p>Insurance: {{insurance}}</p>
+            <p>Zip Code: {{zip_code}}</p>
+            <p>Facility Name: {{facility_name}}</p>
+            <p>Walk In: {{walk_in}}</p>
+            <p>Phone Number: {{phone}}</p>
+            
+            <button onclick = "GoogleMap({{latitude}}, {{longitude}})"> Map </button>
+            <!--<a href= '{{website}}' target='_blank'>Website</button>-->
+
+    </div>
+    
+  	</script>
+<style>
+    .card{
+            width:250px;            box-shadow: 5px 5px 5px #3E12A3;
+            height:320px;           border-radius:10px;
+            margin:20px;            /*display:inline-block;*/float:left;
+            padding:10px;           background: linear-gradient(#006EFF,#548DE2,#64A8F5, white);
+            text-align:center;
+        }
+    img {
+            width:150px;
+            height:150px;
+            
+        }
+    p{
+            font-size:10pt;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+    marquee{
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            font-size: 15pt;
+        
+        }
+        
+    body{
+            background-image: url("background4.jpg");
+        }  
+        
+    h2{
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+        
+    .jumbotron{
+        position: relative;
+        padding: 0;
+        text-align: center;
+        margin-left: -270px;
+        margin-right: -270px;
+        margin-bottom: 0;
+        margin-top: -20px;
+        background-image: url("jbackground2.jpg");
+            /*background: linear-gradient(to right,white,#6BE9F1, #66E7E1, #30D9F0,  #11929B, #30D9F0, #66e7e1,#6be9f1,white);*/
+        }
+        .jumbotron:hover{
+            color:#777373;
+        }
+        #googleMap{
+            width:70%;        
+            height:300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        input{
+            background-color: #BDB8B8;
+            color: #2D1277;
+        }
+        button{
+		background-color:#A1C7F8;
+		text-decoration:none;
+		color:black;
+		font-weight:bold;
+		padding:5px;
+		border-radius:10px;
+		box-shadow:gray 4px 4px 4px;
+	    } 
+        
+       
+      </style>
+    <script>
+        function loadJSON(){//IMPORT DATA FUNCTION
+            $.getJSON("https://data.cityofnewyork.us/resource/inaf-e6a5.json",function(data){
+                MotorAcc(data);
+            });
+        }
+        function MotorAcc(data){//MAIN FUNCTION
+            var template = document.getElementById("acc").innerHTML;
+            var build = "";
+            var bor = document.getElementById("borough").value;
+            var zip = document.getElementById("Zip Code").value;
+            for (var i=0; i<data.length; i++){
+                if (bor.toLowerCase().indexOf( data[i].borough.toLowerCase() ) != -1){
+                    build += Mustache.render(template, data[i]);
+                }if (zip.indexOf(data[i].zip_code) !=-1){
+                    build += Mustache.render(template, data[i]);
+                } 
+        document.getElementById("op").innerHTML = build;
+            }
+        }
+        function GoogleMap(latitude, longitude){//MAP FUNCTION
+            var gMap = document.getElementById("googleMap");
+            var mapProp = {
+                center: new google.maps.LatLng(latitude, longitude),
+                zoom: 16,
+            }
+            var map=new google.maps.Map(gMap,mapProp);
+        }
+</script>
+<body>
+<div class = "container">
+    <div class = "jumbotron">
+        <h2>PHARMACIES OFFERING FLU VACCINES</h2>  
+        <h4>Enter Your Borough or Zip Code</h4><br>
+        <input type="text" id="borough" placeholder="Enter NYC Borough"><h5>or</h5>
+        <input type="text" id="Zip Code" placeholder="Enter NYC Zip Code"><br><br>
+        <button type="button" class= "btn btn-info btn-md" value="Input Button" onclick="loadJSON()">Flu Vaccine Location</button>
+        <br><br>
+        
+    </div>
+                
+</div>
+<div class = "containter">
+    <div id="googleMap"></div>
+    <div id="op"></div>
+</div>
+    
+       
+</body>
+</html>
